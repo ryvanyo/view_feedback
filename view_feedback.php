@@ -35,6 +35,15 @@ function search_course_dir($id){
 	return '';
 }
 
+function process_nota($nota_line){
+	$nota_final = 0.0;
+	$notas = explode("+", $nota_line);
+	foreach($notas as $nota){
+		$nota_final += (float) trim($nota);
+	}
+	return $nota_final / count($notas);
+}
+
 function search_feedback($dir){
 	$resp = [];
 	if (is_dir($dir)) {
@@ -57,9 +66,9 @@ function search_feedback($dir){
 				
 				if (is_file($feedback_path)) {
 					$content = file($feedback_path);
-					$partes_nota = explode('/', $content[0]);
+					//$partes_nota = explode('/', $content[0]);
 					$detalles = implode("", array_slice($content, 1));
-					$info['nota'] = $partes_nota;
+					$info['nota'] = process_nota($content[0]);
 					$info['detalle'] = $detalles;
 				} else {
 					$info['nota'] = 0;
@@ -171,9 +180,9 @@ if (isset($_GET['id'])) {
 		<?php
 			$contador = 1;
 			foreach($feedbacks as $feedback){
-				$nota_text = "";
-				$nota_numeric = "";
-				if (isset($feedback['nota']) && is_array($feedback['nota'])) {
+				$nota_text = $feedback['nota'];
+				$nota_numeric = $nota_text * 40;
+				/*if (isset($feedback['nota']) && is_array($feedback['nota'])) {
 					if (!isset($feedback['nota'][1]))
 						$feedback['nota'][1] = 1;
 					$nota_text = ((float) $feedback['nota'][0]/ (float)$feedback['nota'][1])." (".$feedback['nota'][0]." de ".$feedback['nota'][1].")";
@@ -181,7 +190,7 @@ if (isset($_GET['id'])) {
 				} else {
 					$nota_text = $feedback['nota'];
 					$nota_numeric = (float) $feedback['nota'];
-				}
+				}*/
 				$url = $feedback['homework'].'/'.$feedback['dir'];
 				echo "<tr id=\"fila".$feedback['telegram_id']."\">"
 						. "<td><a href='$url' target='_blank'>".($contador++)."</a></td>"
@@ -189,7 +198,9 @@ if (isset($_GET['id'])) {
 						. "<td><a href=\"https://web.telegram.org/#/im?p=u".$feedback['telegram_id']."\" target=\"telegram\">".htmlencode($feedback['telegram_id'])."</td>"
 						. "<td>$nota_text</td>"
 						. "<td>"
-						.	"<span id=\"nota".$feedback['telegram_id']."\" class=\"nota\" data-clipboard-action=\"copy\" data-clipboard-target=\"#nota".$feedback['telegram_id']."\">".$nota_numeric."</span>"
+						.	"<span id=\"nota".$feedback['telegram_id']."\" class=\"nota\" data-clipboard-action=\"copy\" data-clipboard-target=\"#nota".$feedback['telegram_id']."\">"
+								.$nota_numeric
+							."</span>"
 						. "</td>"
 						. "<td>".nl2br(htmlencode($feedback['detalle']))."</td>"
 					. "</tr>";
