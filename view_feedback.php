@@ -44,6 +44,31 @@ function process_nota($nota_line){
 	return $nota_final / count($notas);
 }
 
+function parse_entregas_file($entregas_file){
+	if (!is_file($entregas_file)) {
+		return [];
+	}
+	
+	$deliveries = [];
+	$fh = fopen($entregas_file, "r");
+	if ($fh) {
+		while (($line = fgets($fh)) !== false) {
+			if (substr($line, 0, 14)!='El estudiante:')
+				continue;
+			$telegram_id = reset(explode(" - ", substr($line, 15)));
+			if (isset($deliveries[$telegram_id])) {
+				unset($deliveries[$telegram_id]);
+			}
+			$deliveries[$telegram_id] = $telegram_id;
+		}
+		fclose($fh);
+		return $deliveries;
+	} else {
+		return [];
+	}
+
+}
+
 function search_feedback($dir){
 	$resp = [];
 	if (is_dir($dir)) {
@@ -74,7 +99,7 @@ function search_feedback($dir){
 					$info['nota'] = 0;
 					$info['detalle'] = "";
 				}
-				$resp[] = $info;
+				$resp[$info['telegram_id']] = $info;
 			}
 			closedir($dh);
 		}
@@ -93,6 +118,7 @@ if (isset($_GET['id'])) {
 	$dir = search_course_dir($id);
 	
 	if (!empty($dir)) {
+		$deliveries = parse_entregas_file($dir.'/entregas.txt');
 		$feedbacks = search_feedback($dir);
 	}
 }
@@ -179,18 +205,12 @@ if (isset($_GET['id'])) {
 			<tbody>
 		<?php
 			$contador = 1;
-			foreach($feedbacks as $feedback){
+			foreach($deliveries as $telegram_id){
+			//foreach($feedbacks as $feedback){
+				$feedback = $feedbacks[$telegram_id];
 				$nota_text = $feedback['nota'];
 				$nota_numeric = $nota_text * 40;
-				/*if (isset($feedback['nota']) && is_array($feedback['nota'])) {
-					if (!isset($feedback['nota'][1]))
-						$feedback['nota'][1] = 1;
-					$nota_text = ((float) $feedback['nota'][0]/ (float)$feedback['nota'][1])." (".$feedback['nota'][0]." de ".$feedback['nota'][1].")";
-					$nota_numeric = (float) $feedback['nota'][0]/ (float)$feedback['nota'][1] * 40;
-				} else {
-					$nota_text = $feedback['nota'];
-					$nota_numeric = (float) $feedback['nota'];
-				}*/
+
 				$url = $feedback['homework'].'/'.$feedback['dir'];
 				echo "<tr id=\"fila".$feedback['telegram_id']."\">"
 						. "<td><a href='$url' target='_blank'>".($contador++)."</a></td>"
