@@ -1,0 +1,14 @@
+f:\documentos roger\visual studio 2012\Projects\nota\nota\bin\Debug\nota.exe.config
+f:\documentos roger\visual studio 2012\Projects\nota\nota\bin\Debug\nota.exe
+f:\documentos roger\visual studio 2012\Projects\nota\nota\bin\Debug\nota.pdb
+f:\documentos roger\visual studio 2012\Projects\nota\nota\obj\Debug\nota.csprojResolveAssemblyReference.cache
+f:\documentos roger\visual studio 2012\Projects\nota\nota\obj\Debug\nota.exe
+f:\documentos roger\visual studio 2012\Projects\nota\nota\obj\Debug\nota.pdb
+C:\Users\PCDOC\Downloads\nota\nota\bin\Debug\nota.exe.config
+C:\Users\PCDOC\Downloads\nota\nota\obj\Debug\nota.exe
+C:\Users\PCDOC\Downloads\nota\nota\obj\Debug\nota.pdb
+C:\Users\PCDOC\Downloads\nota\nota\bin\Debug\nota.exe
+C:\Users\PCDOC\Downloads\nota\nota\bin\Debug\nota.pdb
+C:\Users\PCDOC\Downloads\nota\nota\bin\Debug\System.Net.Json.dll
+C:\Users\PCDOC\Downloads\nota\nota\obj\Debug\nota.csprojResolveAssemblyReference.cache
+f:\Documentos Roger\Visual Studio 2012\Projects\nota\nota\bin\Debug\System.Net.Json.dll
