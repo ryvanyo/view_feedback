@@ -112,6 +112,35 @@ function htmlencode($text){
 	return htmlentities($text, ENT_QUOTES, 'utf-8');
 }
 
+function extra_homeworks($dir, &$deliveries, &$feedbacks){
+  $homework_arr = explode('/', $dir);
+  $homework = end($homework_arr);
+  if (is_dir($dir)) {
+    if ($dh = opendir($dir)) {
+      while (($file = readdir($dh)) !== false) {
+        if ($file=='.'||$file=='..') continue;
+        if (!is_dir($dir.'/'.$file)) continue;
+        
+        $arr = explode("-", $file);
+        $supposed_id = trim($arr[0]);
+        if (!isset($deliveries[$supposed_id])) {
+          $deliveries[$file] = $file;
+          
+          $feedbacks[$file] = [
+            'telegram_id' => $file,
+            'nombre' => $file,
+            'dir' => $file,
+            'homework' => $homework,
+            'nota' => '',
+            'detalle' => ''
+          ];
+        }
+      }
+      closedir($dh);
+    }
+  }
+}
+
 if (isset($_GET['id'])) {
 	$id = (int) $_GET['id'];
 	
@@ -120,6 +149,7 @@ if (isset($_GET['id'])) {
 	if (!empty($dir)) {
 		$deliveries = parse_entregas_file($dir.'/entregas.txt');
 		$feedbacks = search_feedback($dir);
+    extra_homeworks($dir, $deliveries, $feedbacks);
 	}
 }
 ?><!DOCTYPE html>
