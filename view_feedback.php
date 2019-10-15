@@ -66,7 +66,6 @@ function parse_entregas_file($entregas_file){
 	} else {
 		return [];
 	}
-
 }
 
 function search_feedback($dir){
@@ -131,9 +130,18 @@ function extra_homeworks($dir, &$deliveries, &$feedbacks){
             'nombre' => $file,
             'dir' => $file,
             'homework' => $homework,
-            'nota' => '',
+            'nota' => 0,
             'detalle' => ''
           ];
+          
+          $feedback_path = $dir.'/'.$file.'/feedback.txt';
+          if (is_file($feedback_path)) {
+            $content = file($feedback_path);
+            //$partes_nota = explode('/', $content[0]);
+            $detalles = implode("", array_slice($content, 1));
+            $feedbacks[$file]['nota'] = process_nota($content[0]);
+            $feedbacks[$file]['detalle'] = $detalles;
+          }
         }
       }
       closedir($dh);
@@ -149,7 +157,7 @@ if (isset($_GET['id'])) {
 	if (!empty($dir)) {
 		$deliveries = parse_entregas_file($dir.'/entregas.txt');
 		$feedbacks = search_feedback($dir);
-    extra_homeworks($dir, $deliveries, $feedbacks);
+        extra_homeworks($dir, $deliveries, $feedbacks);
 	}
 }
 ?><!DOCTYPE html>
@@ -238,8 +246,11 @@ if (isset($_GET['id'])) {
 			foreach($deliveries as $telegram_id){
 			//foreach($feedbacks as $feedback){
 				$feedback = $feedbacks[$telegram_id];
-				$nota_text = $feedback['nota'];
-				$nota_numeric = $nota_text * 40;
+				$nota_text = (float) $feedback['nota'];
+                if ($nota_text<=1) {
+                    $nota_text = $nota_text * 40;
+                }
+				$nota_numeric = $nota_text;
 
 				$url = $feedback['homework'].'/'.$feedback['dir'];
 				echo "<tr id=\"fila".$feedback['telegram_id']."\">"
